@@ -11,7 +11,7 @@ const authRoute = require('./routes/auth')
 const port = process.env.PORT || 3000
 
 // middleware
-// app.use(express.json())
+app.use(express.json())
 app.use('/api/user', authRoute)
 
 //connect to db then run server
