@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 
+/**
+ * Formats the date string
+ * @param {date} date The date inputted into the system
+ * @param {format} format The format to return
+ * @returns formatted String
+ */
 function formatDate(date, format) {
    const map = {
        mm: date.getMonth() + 1,
@@ -11,6 +17,9 @@ function formatDate(date, format) {
    return format.replace(/mm|dd|yy|yyy/gi, matched => map[matched])
 }
 
+/**
+ * Defines how user model is represented in the system
+ */
 const userSchema = mongoose.Schema({
    name: {
       type: String,
