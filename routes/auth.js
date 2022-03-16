@@ -1,9 +1,9 @@
-const res = require('express/lib/response')
 const router = require('express').Router()
+const {
+   registerUser
+} = require('../controllers/auth')
 
 // register route
-router.post('/register', (req, res) => {
-   res.send('Register route')
-});
+router.route('/register').post(registerUser);
 
 module.exports = router;
