@@ -1,0 +1,27 @@
+{
+  "name": "task_manager",
+  "version": "1.0.0",
+  "description": "A service that helps you manage, view and control tasks activity within your organization or project.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server",
+    "dev": "nodemon",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DeleMike/Tasks-Manager.git"
+  },
+  "author": "Akindele Michael",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DeleMike/Tasks-Manager/issues"
+  },
+  "homepage": "https://github.com/DeleMike/Tasks-Manager#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
