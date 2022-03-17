@@ -10,6 +10,7 @@ const authRoute = require('./routes/auth')
 const tasksRoute = require('./routes/tasks')
 
 const notFound = require('./middleware/not-found')
+const errorHandler = require('./middleware/error-handler')
 
 const port = process.env.PORT || 3000
 
@@ -19,6 +20,7 @@ app.use('/api/user', authRoute)
 app.use('/api/tasks', tasksRoute)
 
 app.use(notFound)
+app.use(errorHandler)
 
 //connect to db then run server
 const start = () => {
