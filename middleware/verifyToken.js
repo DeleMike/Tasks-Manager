@@ -11,9 +11,12 @@ const authMiddleware = (req, res, next) => {
    try {
       const verified = jwt.verify(token, process.env.TOKEN_SECRET)
       req.user = verified
+      next()
    } catch (error) {
       // bad request, token might be tampered
       return res.status(400).send('Invalid token')
    }
 
 }
+
+module.exports = authMiddleware
