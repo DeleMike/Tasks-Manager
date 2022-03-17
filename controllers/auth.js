@@ -41,7 +41,8 @@ const registerUser = async (req, res) => {
    //save a user to db
    try {
       await user.save()
-      res.status(200).send({
+      const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET)
+      res.status(201).send({
          user: user._id
       });
    } catch (error) {
@@ -70,9 +71,17 @@ const loginUser = async (req, res) => {
 
    // create and assign token
    const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET)
-   res.header('auth-token', token).send(token)
+   res.header('auth-token', token).json({msg:'user signed in',token})
 }
+
+/**
+ * Tries to logout the user
+ */
+const logoutUser = async (req, res) => {
+}
+
 module.exports = {
    registerUser,
-   loginUser
+   loginUser,
+   logoutUser
 }
