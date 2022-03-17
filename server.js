@@ -9,12 +9,16 @@ const connectDb = require('./db/connect')
 const authRoute = require('./routes/auth')
 const tasksRoute = require('./routes/tasks')
 
+const notFound = require('./middleware/not-found')
+
 const port = process.env.PORT || 3000
 
 // middleware
 app.use(express.json())
 app.use('/api/user', authRoute)
 app.use('/api/tasks', tasksRoute)
+
+app.use(notFound)
 
 //connect to db then run server
 const start = () => {

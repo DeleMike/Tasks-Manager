@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const authMiddleware = require('../middleware/verifyToken')
+const authMiddleware = require('../middleware/verify-token')
 
 const {
    getAllTasks
