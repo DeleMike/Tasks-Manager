@@ -3,6 +3,9 @@ const jwt = require('jsonwebtoken')
 
 const User = require('../models/User')
 const asyncWrapper = require('../middleware/async')
+const {
+   createCustomError
+} = require('../errors/custom-error')
 
 const {
    registerValidation,
@@ -11,18 +14,20 @@ const {
 /**
  * Tries to register a user
  */
-const registerUser = asyncWrapper(async (req, res) => {
+const registerUser = asyncWrapper(async (req, res, next) => {
    const {
       error
    } = registerValidation(req.body)
 
-   if (error) return res.status(400).send(error.details[0].message)
+   if (error) return next(createCustomError(error.details[0].message, 404))
 
    // check if user is already in db
    const emailExists = await User.findOne({
       email: req.body.email
    })
-   if (emailExists) return res.status(400).send("Email already exists.")
+   if (emailExists) return next(createCustomError("Email already exists.", 400))
+   //using async-express-error
+   // if (emailExists) throw Error('Email already exists.')
 
    // next encrypt passowrd
    const salt = await bcrypt.genSalt(10)
@@ -53,21 +58,21 @@ const registerUser = asyncWrapper(async (req, res) => {
 /**
  * Tries to login a user
  */
-const loginUser = asyncWrapper(async (req, res) => {
+const loginUser = asyncWrapper(async (req, res, next) => {
    const {
       error
    } = loginValidation(req.body)
-   if (error) return res.status(400).send(error.details[0].message)
+   if (error) return next(createCustomError(error.details[0].message, 404))
 
    // check if user email is not in db
    const user = await User.findOne({
       email: req.body.email
    })
-   if (!user) return res.status(400).send('Email does not exist.')
+   if (!user) return next(createCustomError("Email already exists.", 400))
 
    // check if password is correct
    const validPass = await bcrypt.compare(req.body.password, user.password)
-   if (!validPass) return res.status(400).send('password does not match.')
+   if (!validPass) return next(createCustomError("Password does not macth", 400))
 
    // create and assign token
    const token = jwt.sign({
