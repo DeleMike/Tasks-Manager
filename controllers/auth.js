@@ -1,11 +1,12 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const { StatusCodes } = require('http-status-codes')
 
 const User = require('../models/User')
 const asyncWrapper = require('../middleware/async')
 const {
-   createCustomError
-} = require('../errors/custom-error')
+   BadRequest
+} = require('../errors')
 
 const {
    registerValidation,
@@ -19,13 +20,13 @@ const registerUser = asyncWrapper(async (req, res, next) => {
       error
    } = registerValidation(req.body)
 
-   if (error) return next(createCustomError(error.details[0].message, 404))
+   if (error) throw new BadRequest(error.details[0].message)
 
    // check if user is already in db
    const emailExists = await User.findOne({
       email: req.body.email
    })
-   if (emailExists) return next(createCustomError("Email already exists.", 400))
+   if (emailExists) throw new BadRequest("Email already exists.")
    //using async-express-error
    // if (emailExists) throw Error('Email already exists.')
 
@@ -50,7 +51,7 @@ const registerUser = asyncWrapper(async (req, res, next) => {
    const token = jwt.sign({
       _id: user._id
    }, process.env.TOKEN_SECRET)
-   res.status(201).send({
+   res.status(StatusCodes.CREATED).send({
       user: user._id
    });
 })
@@ -62,17 +63,17 @@ const loginUser = asyncWrapper(async (req, res, next) => {
    const {
       error
    } = loginValidation(req.body)
-   if (error) return next(createCustomError(error.details[0].message, 404))
+   if (error) throw new BadRequest(error.details[0].message)
 
    // check if user email is not in db
    const user = await User.findOne({
       email: req.body.email
    })
-   if (!user) return next(createCustomError("Email already exists.", 400))
+   if (!user) throw new BadRequest("Email already exists.", 400)
 
    // check if password is correct
    const validPass = await bcrypt.compare(req.body.password, user.password)
-   if (!validPass) return next(createCustomError("Password does not macth", 400))
+   if (!validPass) throw new BadRequest("Password does not macth", 400)
 
    // create and assign token
    const token = jwt.sign({

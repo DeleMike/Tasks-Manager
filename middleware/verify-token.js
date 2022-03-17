@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken')
 
+const { UnAuthenticatedError } = require('../errors')
+
 /**
  * Verify user token to give access to private routes
  */
@@ -14,7 +16,7 @@ const authMiddleware = (req, res, next) => {
       next()
    } catch (error) {
       // bad request, token might be tampered
-      return res.status(400).send('Invalid token')
+      throw new UnAuthenticatedError('Not authorized to access this route')
    }
 
 }
