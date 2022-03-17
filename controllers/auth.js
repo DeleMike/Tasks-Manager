@@ -2,6 +2,8 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const User = require('../models/User')
+const asyncWrapper = require('../middleware/async')
+
 const {
    registerValidation,
    loginValidation
@@ -9,7 +11,7 @@ const {
 /**
  * Tries to register a user
  */
-const registerUser = async (req, res) => {
+const registerUser = asyncWrapper(async (req, res) => {
    const {
       error
    } = registerValidation(req.body)
@@ -39,21 +41,19 @@ const registerUser = async (req, res) => {
    });
 
    //save a user to db
-   try {
-      await user.save()
-      const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET)
-      res.status(201).send({
-         user: user._id
-      });
-   } catch (error) {
-      res.status(400).send(err)
-   }
-}
+   await user.save();
+   const token = jwt.sign({
+      _id: user._id
+   }, process.env.TOKEN_SECRET)
+   res.status(201).send({
+      user: user._id
+   });
+})
 
 /**
  * Tries to login a user
  */
-const loginUser = async (req, res) => {
+const loginUser = asyncWrapper(async (req, res) => {
    const {
       error
    } = loginValidation(req.body)
@@ -70,15 +70,19 @@ const loginUser = async (req, res) => {
    if (!validPass) return res.status(400).send('password does not match.')
 
    // create and assign token
-   const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET)
-   res.header('auth-token', token).json({msg:'user signed in',token})
-}
+   const token = jwt.sign({
+      _id: user._id
+   }, process.env.TOKEN_SECRET)
+   res.header('auth-token', token).json({
+      msg: 'user signed in',
+      token
+   })
+})
 
 /**
  * Tries to logout the user
  */
-const logoutUser = async (req, res) => {
-}
+const logoutUser = asyncWrapper(async (req, res) => {})
 
 module.exports = {
    registerUser,
