@@ -1,3 +1,5 @@
+const bcrypt = require('bcryptjs')
+
 const User = require('../models/User')
 const {
    registerValidation,
@@ -19,11 +21,15 @@ const registerUser = async (req, res) => {
    })
    if (emailExists) return res.status(400).send("Email already exists.")
 
+   // next encrypt passowrd
+   const salt = await bcrypt.genSalt(10)
+   const hashPassword = await bcrypt.hash(req.body.password, salt)
+
    // create new user
    const user = new User({
       name: req.body.name,
       email: req.body.email,
-      password: req.body.password,
+      password: hashPassword,
       phone_num: req.body.phone_num,
       dob: req.body.dob,
       team_name: req.body.team_name,
@@ -33,8 +39,10 @@ const registerUser = async (req, res) => {
 
    //save a user to db
    try {
-      const savedUser = await user.save()
-      res.send(savedUser);
+      await user.save()
+      res.send({
+         user: user._id
+      });
    } catch (error) {
       res.status(400).send(err)
    }
