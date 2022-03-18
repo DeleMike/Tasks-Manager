@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { StatusCodes } = require('http-status-codes')
+const {
+   StatusCodes
+} = require('http-status-codes')
 
 const User = require('../models/User')
 const asyncWrapper = require('../middleware/async')
@@ -12,6 +14,7 @@ const {
    registerValidation,
    loginValidation
 } = require('../configs/validation')
+
 /**
  * Tries to register a user
  */
@@ -34,6 +37,8 @@ const registerUser = asyncWrapper(async (req, res, next) => {
    const salt = await bcrypt.genSalt(10)
    const hashPassword = await bcrypt.hash(req.body.password, salt)
 
+   const verificationToken = 'fake token'
+
    // create new user
    const user = new User({
       name: req.body.name,
@@ -44,15 +49,16 @@ const registerUser = asyncWrapper(async (req, res, next) => {
       team_name: req.body.team_name,
       is_team_lead: req.body.is_team_lead,
       github_link: req.body.github_link,
+      verificationToken: verificationToken
+
    });
 
    //save a user to db
    await user.save();
-   const token = jwt.sign({
-      _id: user._id
-   }, process.env.TOKEN_SECRET)
    res.status(StatusCodes.CREATED).send({
-      user: user._id
+      msg: 'Success! Please check your email to verify your email',
+      user: user._id,
+      verificationToken: user.verificationToken
    });
 })
 

@@ -8,10 +8,10 @@ const mongoose = require('mongoose');
  */
 function formatDate(date, format) {
    const map = {
-       mm: date.getMonth() + 1,
-       dd: date.getDate(),
-       yy: date.getFullYear().toString().slice(-2),
-       yyyy: date.getFullYear()
+      mm: date.getMonth() + 1,
+      dd: date.getDate(),
+      yy: date.getFullYear().toString().slice(-2),
+      yyyy: date.getFullYear()
    }
 
    return format.replace(/mm|dd|yy|yyy/gi, matched => map[matched])
@@ -59,6 +59,12 @@ const userSchema = mongoose.Schema({
       trim: true,
       default: 'None'
    },
+   verificationToken: String,
+   isVerified: {
+      type: Boolean,
+      default: false,
+   },
+   verified: Date
 })
 
 module.exports = mongoose.model('Users', userSchema)
