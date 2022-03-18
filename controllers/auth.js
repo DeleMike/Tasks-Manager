@@ -3,17 +3,18 @@ const jwt = require('jsonwebtoken')
 const {
    StatusCodes
 } = require('http-status-codes')
-
 const User = require('../models/User')
 const asyncWrapper = require('../middleware/async')
 const {
    BadRequest
 } = require('../errors')
+const crypto = require('crypto')
 
 const {
    registerValidation,
    loginValidation
 } = require('../configs/validation')
+const UnAuthenticatedError = require('../errors/unauthenticated')
 
 /**
  * Tries to register a user
@@ -37,7 +38,7 @@ const registerUser = asyncWrapper(async (req, res, next) => {
    const salt = await bcrypt.genSalt(10)
    const hashPassword = await bcrypt.hash(req.body.password, salt)
 
-   const verificationToken = 'fake token'
+   const verificationToken = crypto.randomBytes(40).toString('hex')
 
    // create new user
    const user = new User({
@@ -62,6 +63,39 @@ const registerUser = asyncWrapper(async (req, res, next) => {
    });
 })
 
+
+/**
+ * Verify user email address
+ */
+const verifyUserEmail = asyncWrapper(async (req, res) => {
+   const {
+      verificationToken,
+      email
+   } = req.body
+
+   const user = await User.findOne({
+      email
+   })
+   // if there is no user
+   if (!user) throw new UnAuthenticatedError("Verification failed.")
+
+   // verify the token
+   if (user.verificationToken !== verificationToken) throw new UnAuthenticatedError("Verification failed.")
+
+   // if all is well
+   user.isVerified = true
+   user.verified = Date.now()
+   user.verificationToken = '' // clear verify token
+
+   user.save()
+
+   res.status(StatusCodes.OK).json({
+      msg: 'Email verified'
+   })
+
+})
+
+
 /**
  * Tries to login a user
  */
@@ -75,21 +109,23 @@ const loginUser = asyncWrapper(async (req, res, next) => {
    const user = await User.findOne({
       email: req.body.email
    })
-   if (!user) throw new BadRequest("Email already exists.", 400)
+   if (!user) throw new UnAuthenticatedError("Email does not exists.")
 
    // check if password is correct
    const validPass = await bcrypt.compare(req.body.password, user.password)
-   if (!validPass) throw new BadRequest("Password does not macth", 400)
+   if (!validPass) throw new UnAuthenticatedError("Password does not macth")
 
-   // create and assign token
-   const token = jwt.sign({
-      _id: user._id
-   }, process.env.TOKEN_SECRET)
-   res.header('auth-token', token).json({
+   // check if user is verified
+   const isVerified = user.isVerified
+   if (!isVerified) throw new UnAuthenticatedError("Please verify your email address.")
+
+   res.status(StatusCodes.OK).send({
       msg: 'user signed in',
-      token
+      user: user._id,
+      isVerified: user.isVerified
    })
 })
+
 
 /**
  * Tries to logout the user
@@ -99,5 +135,6 @@ const logoutUser = asyncWrapper(async (req, res) => {})
 module.exports = {
    registerUser,
    loginUser,
+   verifyUserEmail,
    logoutUser
 }

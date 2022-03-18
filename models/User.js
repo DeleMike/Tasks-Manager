@@ -40,11 +40,11 @@ const userSchema = mongoose.Schema({
       required: ['true', 'Must provide a phone number'],
       trim: true,
    },
-   dob: {
-      type: Date,
-      // new Date() takes a format of mm-dd-yyyy
-      default: formatDate(new Date(), 'dd/mm/yyyy'),
-   },
+   // dob: {
+   //    type: Date,
+   //    // new Date() takes a format of mm-dd-yyyy
+   //    default: formatDate(new Date(), 'dd/mm/yyyy'),
+   // },
    team_name: {
       type: String,
       required: ['true', 'Must provide the main team you belong to'],
