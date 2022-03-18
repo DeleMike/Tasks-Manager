@@ -10,6 +10,7 @@ const connectDb = require('./db/connect')
 // app routes
 const authRoute = require('./routes/auth')
 const tasksRoute = require('./routes/tasks')
+const userRoute = require('./routes/user')
 
 const notFound = require('./middleware/not-found')
 const errorHandler = require('./middleware/error-handler')
@@ -17,8 +18,10 @@ const errorHandler = require('./middleware/error-handler')
 const port = process.env.PORT || 5000
 
 // middleware
+app.use(express.static('./public'))
 app.use(express.json())
-app.use('/api/user', authRoute)
+app.use('/api/auth', authRoute)
+app.use('/user', userRoute)
 app.use('/api/tasks', tasksRoute)
 
 app.use(notFound)

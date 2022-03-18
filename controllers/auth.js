@@ -1,21 +1,24 @@
 const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 const {
    StatusCodes
 } = require('http-status-codes')
-const nodemailer = require("nodemailer");
+
 const User = require('../models/User')
 const asyncWrapper = require('../middleware/async')
 const {
    BadRequest
 } = require('../errors')
-const crypto = require('crypto')
-
+// const sendEmail = require('../utils/sendEmail')
+const {
+   sendVerificationEmail
+} = require('../utils')
 const {
    registerValidation,
    loginValidation
 } = require('../configs/validation')
 const UnAuthenticatedError = require('../errors/unauthenticated')
+
 
 /**
  * Tries to register a user
@@ -57,10 +60,19 @@ const registerUser = asyncWrapper(async (req, res, next) => {
 
    //save a user to db
    await user.save();
+
+   // send email
+   const origin = 'http://localhost:5000'
+   await sendVerificationEmail({
+      name: user.name,
+      email: user.email,
+      verificationToken: user.verificationToken,
+      origin: origin
+   })
+
    res.status(StatusCodes.CREATED).send({
       msg: 'Success! Please check your email to verify your email',
       user: user._id,
-      verificationToken: user.verificationToken
    });
 })
 
@@ -68,11 +80,13 @@ const registerUser = asyncWrapper(async (req, res, next) => {
 /**
  * Verify user email address
  */
-const verifyUserEmail = asyncWrapper(async (req, res) => {
+const verifyUserEmail = async (req, res) => {
    const {
       verificationToken,
       email
    } = req.body
+
+   console.log(req.body);
 
    const user = await User.findOne({
       email
@@ -94,7 +108,7 @@ const verifyUserEmail = asyncWrapper(async (req, res) => {
       msg: 'Email verified'
    })
 
-})
+}
 
 
 /**
