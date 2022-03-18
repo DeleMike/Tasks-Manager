@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken')
 const {
    StatusCodes
 } = require('http-status-codes')
+const nodemailer = require("nodemailer");
 const User = require('../models/User')
 const asyncWrapper = require('../middleware/async')
 const {
