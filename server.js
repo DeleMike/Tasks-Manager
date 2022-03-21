@@ -19,7 +19,7 @@ const port = process.env.PORT || 5000
 
 // middleware
 app.use(express.static('./public'))
-app.use('/verify-user', express.static('public\\verify-user.html'))
+app.use('/verify-user', express.static(path.join(__dirname, './public\\verify-user.html')))
 app.use(express.json())
 
 
