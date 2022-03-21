@@ -1,6 +1,7 @@
 require('dotenv').config()
 require('express-async-errors');
 
+const path = require('path');
 const express = require('express')
 const app = express()
 const cors = require('cors')
@@ -21,6 +22,10 @@ app.use(express.static('./public'))
 app.use(express.json())
 app.use('/api/auth', authRoute)
 app.use('/api/tasks', tasksRoute)
+
+app.get('/verify-user', (req, res)=> {
+   res.sendFile(path.join(__dirname + '\\public\\verify-user.html'))   
+})
 
 app.use(notFound)
 app.use(errorHandler)

@@ -62,7 +62,9 @@ const registerUser = asyncWrapper(async (req, res, next) => {
    await user.save();
 
    // send email
-   const origin = 'http://localhost:5000'
+   // TODO: Change the origin to local when in development and to prod when deploying
+   // const origin = 'http://localhost:5000'
+   const origin = 'https://task-manager-design.herokuapp.com';
    await sendVerificationEmail({
       name: user.name,
       email: user.email,
@@ -92,10 +94,10 @@ const verifyUserEmail = async (req, res) => {
       email
    })
    // if there is no user
-   if (!user) throw new UnAuthenticatedError("Verification failed.")
+   if (!user) throw new UnAuthenticatedError("Wrong email: Verification failed.")
 
    // verify the token
-   if (user.verificationToken !== verificationToken) throw new UnAuthenticatedError("Verification failed.")
+   if (user.verificationToken !== verificationToken) throw new UnAuthenticatedError("Wrong token: Verification failed.")
 
    // if all is well
    user.isVerified = true
@@ -128,7 +130,7 @@ const loginUser = asyncWrapper(async (req, res, next) => {
 
    // check if password is correct
    const validPass = await bcrypt.compare(req.body.password, user.password)
-   if (!validPass) throw new UnAuthenticatedError("Password does not macth")
+   if (!validPass) throw new UnAuthenticatedError("Password does not match")
 
    // check if user is verified
    const isVerified = user.isVerified
