@@ -18,14 +18,20 @@ const errorHandler = require('./middleware/error-handler')
 const port = process.env.PORT || 5000
 
 // middleware
-app.use(express.static('./public'))
+//app.use(express.static('./public'))
+app.get('/', (req, res)=>{
+   res.sendFile(path.join(__dirname + '\\public\\index.html'))
+})
+app.get('/verify-user', (req, res) => {
+   res.sendFile(path.join(__dirname + '\\public\\verify-user.html'))
+})
 app.use(express.json())
+
+
 app.use('/api/auth', authRoute)
 app.use('/api/tasks', tasksRoute)
 
-app.get('/verify-user', (req, res)=> {
-   res.sendFile(path.join(__dirname + '\\public\\verify-user.html'))   
-})
+
 
 app.use(notFound)
 app.use(errorHandler)
@@ -39,8 +45,8 @@ const start = () => {
       connectDb(process.env.MONGO_URI)
       app.listen(port, () => console.log(`server running on http://localhost:${port}`))
    } catch (error) {
-      console.log('Error happened while connecting to database: '+ error);
-   } 
+      console.log('Error happened while connecting to database: ' + error);
+   }
 }
 
 start()
