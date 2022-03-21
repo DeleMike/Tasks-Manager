@@ -22,6 +22,10 @@ app.use(express.json())
 app.use('/api/auth', authRoute)
 app.use('/api/tasks', tasksRoute)
 
+app.get('/verify-user', (req, res)=> {
+   res.sendFile(__dirname+'\\public\\verify-user.html')   
+})
+
 app.use(notFound)
 app.use(errorHandler)
 
