@@ -1,4 +1,11 @@
-<!DOCTYPE html>
+/**
+ * Displays verification page
+ *
+ */
+const verifyUserClient = async (req, res) => {
+   res.send(
+      `
+      <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -79,3 +86,10 @@
 </script>
 
 </html>
+      `
+   )
+}
+
+module.exports = {
+   verifyUserClient
+}

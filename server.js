@@ -11,6 +11,7 @@ const connectDb = require('./db/connect')
 // app routes
 const authRoute = require('./routes/auth')
 const tasksRoute = require('./routes/tasks')
+const verifyRoute = require('./routes/verify-user')
 
 const notFound = require('./middleware/not-found')
 const errorHandler = require('./middleware/error-handler')
@@ -19,10 +20,9 @@ const port = process.env.PORT || 5000
 
 // middleware
 app.use(express.static('./public'))
-app.use('/verify-user', express.static('public\\verify-user.html'))
 app.use(express.json())
 
-
+app.use(verifyRoute)
 app.use('/api/auth', authRoute)
 app.use('/api/tasks', tasksRoute)
 
