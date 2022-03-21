@@ -62,8 +62,9 @@ const registerUser = asyncWrapper(async (req, res, next) => {
    await user.save();
 
    // send email
-    const origin = 'http://localhost:5000'
-   // const prod_origin = 'https://task-manager-design.herokuapp.com';
+   // TODO: Change the origin to local when in development and to prod when deploying
+   // const origin = 'http://localhost:5000'
+   const origin = 'https://task-manager-design.herokuapp.com';
    await sendVerificationEmail({
       name: user.name,
       email: user.email,

@@ -6,12 +6,29 @@
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Verify your email</title>
+   <style>
+      body {
+         background-color: rgb(238, 229, 229);
+         height: 100%;
+      }
+
+      #info {
+         position: absolute;
+         left: 50%;
+         top: 50%;
+         -webkit-transform: translate(-50%, -50%);
+         transform: translate(-50%, -50%);
+      }
+   </style>
 </head>
 
 <body>
-   <button id="post-btn" title="Verify Email" type="submit">Verify Email</button>
+   <div id="info">
+      <button id="post-btn" title="Verify Email" type="submit">Verify Email</button>
 
-   <h2 id="result"></h2>
+      <h2 id="result"></h2>
+   </div>
+
 </body>
 <script>
    button = document.getElementById('post-btn')
