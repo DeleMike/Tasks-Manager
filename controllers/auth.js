@@ -88,8 +88,6 @@ const verifyUserEmail = async (req, res) => {
       email
    } = req.body
 
-   console.log(req.body);
-
    const user = await User.findOne({
       email
    })
