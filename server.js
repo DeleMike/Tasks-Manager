@@ -4,6 +4,7 @@ require('express-async-errors');
 const path = require('path');
 const express = require('express')
 const app = express()
+const cookieParser = require('cookie-parser');
 const cors = require('cors')
 
 const connectDb = require('./db/connect')
@@ -17,6 +18,8 @@ const notFound = require('./middleware/not-found')
 const errorHandler = require('./middleware/error-handler')
 
 const port = process.env.PORT || 5000
+
+app.use(cookieParser(process.env.TOKEN_SECRET));
 
 // middleware
 app.use(express.static('./public'))

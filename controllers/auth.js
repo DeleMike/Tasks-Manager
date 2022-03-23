@@ -5,13 +5,16 @@ const {
 } = require('http-status-codes')
 
 const User = require('../models/User')
+const Token = require('../models/Token')
 const asyncWrapper = require('../middleware/async')
 const {
    BadRequest
 } = require('../errors')
 // const sendEmail = require('../utils/sendEmail')
 const {
-   sendVerificationEmail
+   sendVerificationEmail,
+   createTokenUser,
+   attachCookiesToResponse,
 } = require('../utils')
 const {
    registerValidation,
@@ -63,8 +66,8 @@ const registerUser = asyncWrapper(async (req, res, next) => {
 
    // send email
    // TODO: Change the origin to local when in development and to prod when deploying
-   // const origin = 'http://localhost:5000'
-   const origin = 'https://task-manager-design.herokuapp.com';
+   const origin = 'http://localhost:5000'
+   // const origin = 'https://task-manager-design.herokuapp.com';
    await sendVerificationEmail({
       name: user.name,
       email: user.email,
@@ -134,11 +137,27 @@ const loginUser = asyncWrapper(async (req, res, next) => {
    const isVerified = user.isVerified
    if (!isVerified) throw new UnAuthenticatedError("Please verify your email address.")
 
-   res.status(StatusCodes.OK).send({
-      msg: 'user signed in',
-      user: user._id,
-      isVerified: user.isVerified
-   })
+   const tokenUser = createTokenUser(user);
+
+   // create refresh token - incase user wants to move to another route. They must have the refresh token
+   // they can move around the application check for existing token
+
+   let refreshToken = '';
+   refreshToken = crypto.randomBytes(40).toString('hex')
+   const userAgent = req.headers['user-agent']
+   const ip = req.ip
+   const userToken = {
+      refreshToken,
+      ip,
+      userAgent,
+      user: user._id
+   }
+
+   await Token.create(userToken)
+
+   attachCookiesToResponse({ res, user: tokenUser, refreshToken });
+
+   res.status(StatusCodes.OK).json({ user: tokenUser });
 })
 
 
