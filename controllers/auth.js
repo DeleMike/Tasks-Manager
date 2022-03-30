@@ -68,8 +68,8 @@ const registerUser = asyncWrapper(async (req, res, next) => {
 
    // send email
    // TODO: Change the origin to local when in development and to prod when deploying
-   const origin = 'http://localhost:5000'
-   // const origin = 'https://task-manager-design.herokuapp.com';
+   //const origin = 'http://localhost:5000'
+   const origin = 'https://task-manager-design.herokuapp.com';
    await sendVerificationEmail({
       name: user.name,
       email: user.email,
@@ -197,7 +197,7 @@ const logoutUser = asyncWrapper(async (req, res) => {
 
    await Token.findOneAndDelete({
       user: req.user.userId
-   }).then(() => console.log('Deleted token'));
+   });
 
 
    res.cookie('accessToken', 'logout', {
@@ -234,8 +234,8 @@ const forgotPassword = asyncWrapper(async (req, res) => {
 
       // send email
       // TODO: Change the origin to local when in development and to prod when deploying
-      const origin = 'http://localhost:5000'
-      // const origin = 'https://task-manager-design.herokuapp.com';
+      // const origin = 'http://localhost:5000'
+      const origin = 'https://task-manager-design.herokuapp.com';
       await sendResetPasswordEmail({
          name: user.name,
          email: user.email,
