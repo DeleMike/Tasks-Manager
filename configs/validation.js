@@ -12,7 +12,7 @@ const registerValidation = (data) => {
       email: Joi.string().required().email(),
       password: Joi.string().min(6).required(),
       phone_num: Joi.array().required(),
-      dob: Joi.date(),
+      dob: Joi.string(),
       team_name: Joi.string().required(),
       is_team_lead: Joi.boolean(),
       github_link: Joi.string().required(),
