@@ -64,7 +64,12 @@ const userSchema = mongoose.Schema({
       type: Boolean,
       default: false,
    },
-   verified: Date
+   verified: Date,
+   passwordToken: {
+      type: String,
+   },
+   passwordTokenExpirationDate: Date,
+   
 })
 
 module.exports = mongoose.model('Users', userSchema)

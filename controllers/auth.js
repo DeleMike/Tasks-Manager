@@ -15,6 +15,8 @@ const {
    sendVerificationEmail,
    createTokenUser,
    attachCookiesToResponse,
+   sendResetPasswordEmail,
+   createHash,
 } = require('../utils')
 const {
    registerValidation,
@@ -192,9 +194,11 @@ const loginUser = asyncWrapper(async (req, res, next) => {
  * Tries to logout the user
  */
 const logoutUser = asyncWrapper(async (req, res) => {
+
    await Token.findOneAndDelete({
       user: req.user.userId
-   });
+   }).then(() => console.log('Deleted token'));
+
 
    res.cookie('accessToken', 'logout', {
       httpOnly: true,
@@ -207,11 +211,95 @@ const logoutUser = asyncWrapper(async (req, res) => {
    res.status(StatusCodes.OK).json({
       msg: 'user logged out!'
    });
+
+})
+
+
+/**
+ * Reacts when a user forgets their password
+ */
+const forgotPassword = asyncWrapper(async (req, res) => {
+   const {
+      email
+   } = req.body
+   if (!email) throw new BadRequest("Please provide valid email")
+
+   // find the user if email is valid
+   const user = await User.findOne({
+      email
+   })
+
+   if (user) {
+      const passwordToken = crypto.randomBytes(70).toString('hex')
+
+      // send email
+      // TODO: Change the origin to local when in development and to prod when deploying
+      const origin = 'http://localhost:5000'
+      // const origin = 'https://task-manager-design.herokuapp.com';
+      await sendResetPasswordEmail({
+         name: user.name,
+         email: user.email,
+         token: passwordToken,
+         origin
+      })
+
+      const tenMinutes = 1000 * 60 * 10
+      const passwordTokenExpirationDate = new Date(Date.now() + tenMinutes);
+
+      //update user details
+      user.passwordToken = createHash(passwordToken)
+      user.passwordTokenExpirationDate = passwordTokenExpirationDate
+
+      await user.save()
+   }
+
+   res.status(StatusCodes.OK).send({
+      msg: 'Please check your email for reset password link'
+   })
+})
+
+
+/**
+ * Tries to reset user password
+ */
+const resetPassword = asyncWrapper(async (req, res) => {
+   const {
+      token,
+      email,
+      password
+   } = req.body;
+
+   if (!token || !email || !password) throw new BadRequest("Please provide all values")
+
+   const user = await User.findOne({
+      email
+   })
+
+   if (user) {
+      const currentDate = new Date();
+
+      // next encrypt passowrd
+      const salt = await bcrypt.genSalt(10)
+      const hashPassword = await bcrypt.hash(req.body.password, salt)
+
+      if (user.passwordToken === createHash(token) && user.passwordTokenExpirationDate > currentDate) {
+         user.password = hashPassword
+         user.passwordToken = null
+         user.passwordTokenExpirationDate = null
+         await user.save()
+      }
+   }
+
+   res.status(StatusCodes.OK).send({
+      'msg': 'Try logging into your account'
+   })
 })
 
 module.exports = {
    registerUser,
    loginUser,
    verifyUserEmail,
-   logoutUser
+   logoutUser,
+   forgotPassword,
+   resetPassword
 }
