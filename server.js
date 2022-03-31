@@ -6,6 +6,9 @@ const express = require('express')
 const app = express()
 const cookieParser = require('cookie-parser');
 const cors = require('cors')
+const swaggerUI = require('swagger-ui-express')
+const YAML = require('yamljs')
+const swaggerDocument = YAML.load('./swagger.yaml')
 
 const connectDb = require('./db/connect')
 
@@ -25,6 +28,7 @@ app.use(cookieParser(process.env.TOKEN_SECRET));
 // middleware
 app.use(express.static('./public'))
 app.use(express.json())
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 
 app.use(verifyRoute)
 app.use(resetPasswordRoute)
