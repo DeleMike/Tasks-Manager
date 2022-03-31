@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors')
 const swaggerUI = require('swagger-ui-express')
 const YAML = require('yamljs')
-const swaggerDocument = YAML.load('./swagger.yaml')
+const swaggerDocument = YAML.load('swagger.yaml')
 
 const connectDb = require('./db/connect')
 
