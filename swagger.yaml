@@ -1,0 +1,188 @@
+openapi: 3.0.0
+info:
+  title: Task Authentication API
+  contact: {}
+  version: '1.0'
+servers:
+- url: https://task-manager-design.herokuapp.com
+  variables: {}
+paths:
+  /:
+    get:
+      tags:
+      - Tasks
+      summary: Get All Tasks
+      operationId: GetAllTasks
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+  /api/auth/login:
+    post:
+      tags:
+      - Auth
+      summary: Login a user
+      operationId: Loginauser
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginauserRequest'
+            example:
+              email: johndoe@gmail.com
+              password: test1234
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /api/auth/logout:
+    delete:
+      tags:
+      - Auth
+      summary: Logout a user
+      operationId: Logoutauser
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /api/auth/register:
+    post:
+      tags:
+      - Auth
+      summary: Register a user
+      operationId: Registerauser
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterauserRequest'
+            example:
+              name: John Doe
+              email: johndoe@gmail.com
+              password: test1234
+              phone_num:
+              - '+2349026544019'
+              dob: 29-January
+              team_name: Tech team
+              is_team_lead: false
+              github_link: https://github.com/johndoe
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+  /api/auth/forgot-password:
+    post:
+      tags:
+      - Auth
+      summary: Forgot Password
+      operationId: ForgotPassword
+      parameters: []
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+            example:
+              email: johndoe@gmail.com
+        required: true
+      responses:
+        '200':
+          description: ''
+          headers: {}
+      deprecated: false
+      security: []
+components:
+  schemas:
+    LoginauserRequest:
+      title: LoginauserRequest
+      required:
+      - email
+      - password
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+      example:
+        email: johndoe@gmail.com
+        password: test1234
+    RegisterauserRequest:
+      title: RegisterauserRequest
+      required:
+      - name
+      - email
+      - password
+      - phone_num
+      - dob
+      - team_name
+      - is_team_lead
+      - github_link
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phone_num:
+          type: array
+          items:
+            type: string
+          description: ''
+        dob:
+          type: string
+        team_name:
+          type: string
+        is_team_lead:
+          type: boolean
+        github_link:
+          type: string
+      example:
+        name: John Doe
+        email: johndoe@gmail.com
+        password: test1234
+        phone_num:
+        - '+2349026544019'
+        dob: 29-January
+        team_name: Tech team
+        is_team_lead: false
+        github_link: https://github.com/johndoe
+    ForgotPasswordRequest:
+      title: ForgotPasswordRequest
+      required:
+      - email
+      type: object
+      properties:
+        email:
+          type: string
+      example:
+        email: johndoe@gmail.com
+  securitySchemes:
+    httpBearer:
+      type: http
+      scheme: bearer
+security:
+- httpBearer: []
+tags:
+- name: Tasks
+  description: ''
+- name: Auth
+  description: ''
