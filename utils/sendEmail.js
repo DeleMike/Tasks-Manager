@@ -9,7 +9,7 @@ const sendEmail = async ({
    subject,
    html
 }) => {
-   let testAccount = await nodemailer.createTestAccount();
+  // let testAccount = await nodemailer.createTestAccount();
 
    // create reusable transporter object using the default SMTP transport
    let transporter = nodemailer.createTransport(nodemailerConfig);
@@ -20,6 +20,12 @@ const sendEmail = async ({
       to,
       subject,
       html
+   }, (err, data) => {
+      if (err) {
+         console.log('an error occurred while sending the email: ' + err);
+      }else{
+         console.log('email is sent successfully');
+      }
    });
 
 }
