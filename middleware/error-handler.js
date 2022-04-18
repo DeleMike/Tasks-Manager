@@ -13,6 +13,7 @@ const errorHandler = (err, req, res, next) => {
          msg: err.message
       })
    }
+   console.log('Error: ', err);
    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Something went wrong, try again later.')
 }
 

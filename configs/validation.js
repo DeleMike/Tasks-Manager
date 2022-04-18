@@ -45,7 +45,7 @@ const createTaskValidation = (data) => {
       due: Joi.date(),
       creator: Joi.string().required(),
       is_overdue: Joi.boolean(),
-      task_events_id: Joi.string().required()
+      task_id: Joi.number()
    })
 
    return schema.validate(data)

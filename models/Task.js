@@ -35,10 +35,7 @@ const taskSchema = mongoose.Schema({
       default: true,
    },
    task_id: {
-      //type: mongoose.Types.ObjectId,
       type: Number,
-      //ref: 'Tasks Events',
-      required: true,
    },
 })
 

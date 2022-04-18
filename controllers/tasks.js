@@ -31,15 +31,22 @@ const createATask = asyncWrapper(async (req, res) => {
       error
    } = createTaskValidation(req.body)
 
-  // console.log('Error: ', error);
+   // console.log('Error: ', error);
 
    if (error) throw new BadRequest(error.details[0].message)
 
-    // check if user is already in db
-    const isTaskEventIdExists = await Task.findOne({
-      email: req.body.task_id
-   })
-   if (isTaskEventIdExists) throw new BadRequest("Event Type already exists.")
+   //get latest id
+   const lastdoc = await Task.find().sort({
+      _id: -1
+   }).limit(1)
+   var task_id = parseInt(lastdoc[0]['task_id']);
+   task_id = task_id + 1
+
+   //  // check if task is already in db
+   //  const isTaskEventIdExists = await Task.findOne({
+   //    email: req.body.task_id
+   // })
+   // if (isTaskEventIdExists) throw new BadRequest("Event Type already exists.")
 
    const task = new Task({
       title: req.body.title,
@@ -48,8 +55,9 @@ const createATask = asyncWrapper(async (req, res) => {
       due: req.body.due,
       creator: req.body.creator,
       is_overdue: req.body.is_overdue,
-      task_events_id: req.body.task_events_id,
+      task_id: task_id,
    })
+   console.log('Task Id: ', task_id);
 
    // save to db
    await task.save()
@@ -57,7 +65,7 @@ const createATask = asyncWrapper(async (req, res) => {
    //create a task model
    res.status(StatusCodes.CREATED).send({
       msg: 'Task has been created successfully.',
-      task_id: task._id,
+      task_id: task_id,
    });
 })
 
