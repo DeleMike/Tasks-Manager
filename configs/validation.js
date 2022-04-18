@@ -37,7 +37,22 @@ const loginValidation = (data) => {
    return schema.validate(data)
 }
 
+const createTaskValidation = (data) => {
+   const schema = Joi.object({
+      title: Joi.string().required(),
+      details: Joi.string().required(),
+      start: Joi.date(),
+      due: Joi.date(),
+      creator: Joi.string().required(),
+      is_overdue: Joi.boolean(),
+      task_events_id: Joi.string().required()
+   })
+
+   return schema.validate(data)
+}
+
 module.exports = {
    registerValidation,
-   loginValidation
+   loginValidation,
+   createTaskValidation
 }
