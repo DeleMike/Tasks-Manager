@@ -33,7 +33,7 @@ app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument))
 app.use(verifyRoute)
 app.use(resetPasswordRoute)
 app.use('/api/auth', authRoute)
-app.use('/api/tasks', tasksRoute)
+app.use('/api', tasksRoute)
 
 
 app.use(notFound)

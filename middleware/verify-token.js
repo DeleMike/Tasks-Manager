@@ -1,22 +1,23 @@
-const jwt = require('jsonwebtoken')
-
-const { UnAuthenticatedError } = require('../errors')
+const {
+   UnAuthenticatedError
+} = require('../errors');
+const { isTokenValid } = require('../utils');
 
 /**
  * Verify user token to give access to private routes
  */
 const authMiddleware = (req, res, next) => {
-   const token = req.header('auth-token')
+   const {refreshToken, accessToken } = req.signedCookies;
+
    // no token, user might not be authenticated
-   if(!token) return res.status(401).send('Access Denied')
+   if(!refreshToken) return res.status(401).send('Access Denied')
 
    try {
-      const verified = jwt.verify(token, process.env.TOKEN_SECRET)
-      req.user = verified
-      next()
+      const payload = isTokenValid(refreshToken);
+      req.user = payload.user;
+      return next();
    } catch (error) {
-      // bad request, token might be tampered
-      throw new UnAuthenticatedError('Not authorized to access this route')
+      throw new UnAuthenticatedError('Authentication Invalid');
    }
 
 }
