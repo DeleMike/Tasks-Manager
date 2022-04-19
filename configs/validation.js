@@ -39,13 +39,15 @@ const loginValidation = (data) => {
 
 const createTaskValidation = (data) => {
    const schema = Joi.object({
+      _id: Joi.number(),
       title: Joi.string().required(),
       details: Joi.string().required(),
       start: Joi.date(),
       due: Joi.date(),
       creator: Joi.string().required(),
       is_overdue: Joi.boolean(),
-      task_id: Joi.number()
+      task_events: Joi.array(),
+      status: Joi.string().required()
    })
 
    return schema.validate(data)
